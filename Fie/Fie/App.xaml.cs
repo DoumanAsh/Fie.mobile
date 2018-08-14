@@ -12,6 +12,9 @@ namespace Fie {
         private ApiConfig api_config = ApiConfig.with(null);
 
         public App() {
+#if DEBUG
+            Console.WriteLine("Fie: Start App");
+#endif
             InitializeComponent();
             MainPage = new MasterPage.Root();
         }
@@ -24,6 +27,10 @@ namespace Fie {
                 Console.WriteLine("Fie: Stored config: {0}", config);
 #endif
                 this.api_config = ApiConfig.deserialize(config);
+
+                if (this.api_config.twitter.access.key != null && this.api_config.twitter.access.secret != null) {
+                    API.Twitter.set_creds(this.api_config.twitter.access.key, this.api_config.twitter.access.secret);
+                }
             } catch (System.Collections.Generic.KeyNotFoundException) {
                 this.save_config();
             } catch (Exception unexpected) {

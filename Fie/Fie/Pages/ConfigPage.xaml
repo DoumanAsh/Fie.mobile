@@ -7,9 +7,7 @@
             <TableView Intent="Settings">
                 <TableRoot>
                     <TableSection Title="Platforms">
-                        <SwitchCell Text="Enable" On="{Binding twitter_on, Mode=TwoWay}" />
-                    </TableSection>
-                    <TableSection Title="Twitter API">
+                        <SwitchCell Text="Enable Twitter" On="{Binding twitter_on, Mode=TwoWay}" />
                     </TableSection>
                 </TableRoot>
             </TableView>
