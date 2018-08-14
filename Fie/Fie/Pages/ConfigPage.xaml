@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<CarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Fie.Pages.ConfigPage">
+    <ContentPage>
+        <StackLayout>
+            <TableView Intent="Settings">
+                <TableRoot>
+                    <TableSection Title="Platforms">
+                        <SwitchCell Text="Enable" On="{Binding twitter_on, Mode=TwoWay}" />
+                    </TableSection>
+                    <TableSection Title="Twitter API">
+                    </TableSection>
+                </TableRoot>
+            </TableView>
+
+            <Button Text="Save" Command="{Binding save_command}" />
+        </StackLayout>
+    </ContentPage>
+
+    <ContentPage>
+        <StackLayout>
+            <Button Text="Connect twitter" Command="{Binding connect_twitter}" />
+            <Button Text="Reset twitter" Command="{Binding reset_twitter}" />
+        </StackLayout>
+    </ContentPage>
+</CarouselPage>

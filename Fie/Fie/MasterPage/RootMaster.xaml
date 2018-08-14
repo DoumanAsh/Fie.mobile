@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Fie.MasterPage"
+             xmlns:pages="using:Fie.Pages"
+             x:Class="Fie.MasterPage.RootMaster"
+             Title="Master">
+    <StackLayout>
+        <ListView x:Name="list_view" x:FieldModifier="public" SeparatorVisibility="Default" HasUnevenRows="true">
+            <ListView.Header>
+                <FlexLayout Direction="Column">
+                    <StackLayout BackgroundColor="Teal" Padding="5, 5, 5, 5">
+                        <Label Text="Fie" FontSize="Large" TextColor="White" Style="{DynamicResource SubtitleStyle}" />
+                    </StackLayout>
+                </FlexLayout>
+            </ListView.Header>
+
+            <ListView.ItemsSource>
+                <x:Array Type="{x:Type local:RootMenuItem}">
+                    <local:RootMenuItem title="{x:Static pages:HomePage.TITLE}" target="{x:Type pages:HomePage}" />
+                    <local:RootMenuItem title="{x:Static pages:ConfigPage.TITLE}"  target="{x:Type pages:ConfigPage}" />
+                </x:Array>
+            </ListView.ItemsSource>
+
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextCell Text="{Binding title}" TextColor="Gray" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackLayout>
+</ContentPage>
