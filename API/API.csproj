@@ -1,11 +1,21 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <UserSecretsId>79a3edd0-2092-40a2-a04d-dcb46d5ca9ed</UserSecretsId>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="TweetinviAPI" Version="4.0.0" />
-  </ItemGroup>
+    <ItemGroup>
+      <None Remove="consumer_key.txt" />
+      <None Remove="consumer_secret.txt" />
+    </ItemGroup>
 
+    <ItemGroup>
+      <EmbeddedResource Include="consumer_key.txt" />
+      <EmbeddedResource Include="consumer_secret.txt" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="TweetinviAPI" Version="4.0.0" />
+    </ItemGroup>
 </Project>

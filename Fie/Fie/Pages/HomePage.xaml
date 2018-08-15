@@ -5,7 +5,7 @@
     <ContentPage.Content>
         <StackLayout>
             <Label Text="Share Post" HorizontalOptions="FillAndExpand" />
-            <Editor Text="{Binding text, Mode=TwoWay}" AutoSize="TextChanges" Keyboard="Chat" />
+            <Editor Text="{Binding Text, Mode=TwoWay}" AutoSize="TextChanges" Keyboard="Chat" />
             <Button Text="Attach image" Command="{Binding open_file}" />
             <Button Text="Post" Command="{Binding post_tweet}" />
         </StackLayout>

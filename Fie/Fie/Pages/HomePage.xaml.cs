@@ -4,16 +4,30 @@ using Xamarin.Forms.Xaml;
 using API;
 using System;
 using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Fie.Pages {
 
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class HomePage : ContentPage {
+    public partial class HomePage : ContentPage, INotifyPropertyChanged {
         public const string TITLE = "Home";
 
-        public string text { set; get; }
+        private string text;
         public Command post_tweet { private set; get; }
         public Command open_file { private set; get; }
+
+        //Settings change event
+        public event PropertyChangedEventHandler text_change;
+
+        public string Text {
+            set {
+                text = value;
+                post_tweet.ChangeCanExecute();
+                text_change?.Invoke(this, new PropertyChangedEventArgs("text"));
+            }
+            get => text;
+        }
 
         public HomePage() {
             Title = TITLE;
@@ -31,11 +45,10 @@ namespace Fie.Pages {
 #endif
                         await DisplayAlert("Failed to post", "Error posting on twitter", "Ok");
                     }
-                    //TODO: wtf!? it is not reflected on editor
-                    text = null;
+                    Text = null;
                 },
                 canExecute: () => {
-                    return true;
+                    return text != null && text.Length > 0;
                 }
             );
             open_file = new Command(

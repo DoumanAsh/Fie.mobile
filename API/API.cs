@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 
 using Tweetinvi;
-using Tweetinvi.Core.Public.Parameters;
 using Tweetinvi.Models;
 using Tweetinvi.Parameters;
 
@@ -13,7 +14,7 @@ namespace API {
         public List<byte[]> images;
 
         public Options set_nsfw() {
-            this.nsfw = true;
+            nsfw = true;
             return this;
         }
 
@@ -27,11 +28,32 @@ namespace API {
         }
     }
 
-    public class Twitter {
-        private const string CONSUMER_KEY = "2PRGI5t7xGtn9KGkxGuNB3jbY";
-        private const string CONSUMER_SECRET = "r4cwV6ut7gbMjm4fHD0u3hzWRCulvj6Xxxx3bR0xbhbx1ti3Qy";
+    public class TwitterConsumerKeys {
+        private const string CONSUMER_KEY_R_NAME = "consumer_key.txt";
+        private const string CONSUMER_SECRET_R_NAME = "consumer_secret.txt";
 
-        private TwitterCredentials creds = new TwitterCredentials(CONSUMER_KEY, CONSUMER_SECRET);
+        public string key { get; private set; }
+        public string secret { get; private set; }
+
+        public TwitterConsumerKeys() {
+            var assembly = Assembly.GetExecutingAssembly();
+
+            using (var stream = assembly.GetManifestResourceStream(CONSUMER_KEY_R_NAME))
+            using (var reader = new StreamReader(stream)) {
+                key = reader.ReadToEnd();
+            }
+
+            using (var stream = assembly.GetManifestResourceStream(CONSUMER_SECRET_R_NAME))
+            using (var reader = new StreamReader(stream)) {
+                secret = reader.ReadToEnd();
+            }
+        }
+    }
+
+    public class Twitter {
+        private static readonly TwitterConsumerKeys KEYS = new TwitterConsumerKeys();
+
+        private TwitterCredentials creds = new TwitterCredentials(KEYS.key, KEYS.secret);
         private IAuthenticationContext ctx;
 
         public string get_auth() {
@@ -47,7 +69,7 @@ namespace API {
         }
 
         public static void set_creds(string access_key, string access_secret) {
-            Auth.ApplicationCredentials = new TwitterCredentials(CONSUMER_KEY, CONSUMER_SECRET, access_key, access_secret);
+            Auth.ApplicationCredentials = new TwitterCredentials(KEYS.key, KEYS.secret, access_key, access_secret);
         }
 
         public bool can_post(string text) {
