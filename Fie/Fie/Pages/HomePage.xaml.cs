@@ -10,23 +10,26 @@ using System.Runtime.CompilerServices;
 namespace Fie.Pages {
 
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class HomePage : ContentPage, INotifyPropertyChanged {
+    public partial class HomePage : CarouselPage, INotifyPropertyChanged {
         public const string TITLE = "Home";
 
-        private string text;
         public Command post_tweet { private set; get; }
         public Command open_file { private set; get; }
 
         //Settings change event
-        public event PropertyChangedEventHandler text_change;
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void on_property_change([CallerMemberName] string name = null) {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
 
-        public string Text {
+        private string _text;
+        public string text {
             set {
-                text = value;
+                _text = value;
+                on_property_change();
                 post_tweet.ChangeCanExecute();
-                text_change?.Invoke(this, new PropertyChangedEventArgs("text"));
             }
-            get => text;
+            get => _text;
         }
 
         public HomePage() {
@@ -35,17 +38,16 @@ namespace Fie.Pages {
 
             post_tweet = new Command(
                 execute: async () => {
-                    if (text == null) return;
-
                     try {
-                        await API.Twitter.post_tweet(text, new API.Options());
+                        var task =  API.Twitter.post_tweet(text, new API.Options());
+                        text = null;
+                        await task;
                     } catch (Exception error) {
 #if DEBUG
                         Console.WriteLine("Fie: error: {0}", error);
 #endif
                         await DisplayAlert("Failed to post", "Error posting on twitter", "Ok");
                     }
-                    Text = null;
                 },
                 canExecute: () => {
                     return text != null && text.Length > 0;

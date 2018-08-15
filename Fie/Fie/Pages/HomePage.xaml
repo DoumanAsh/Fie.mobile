@@ -1,13 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Fie.Pages.HomePage">
-    <ContentPage.Content>
+<CarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
+              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+              x:Class="Fie.Pages.HomePage">
+    <ContentPage>
         <StackLayout>
-            <Label Text="Share Post" HorizontalOptions="FillAndExpand" />
-            <Editor Text="{Binding Text, Mode=TwoWay}" AutoSize="TextChanges" Keyboard="Chat" />
-            <Button Text="Attach image" Command="{Binding open_file}" />
+            <Label Text="Share Post" HorizontalOptions="CenterAndExpand" />
+            <Editor Text="{Binding text, Mode=TwoWay}" AutoSize="TextChanges" Keyboard="Chat"/>
             <Button Text="Post" Command="{Binding post_tweet}" />
         </StackLayout>
-    </ContentPage.Content>
-</ContentPage>
+    </ContentPage>
+
+    <ContentPage>
+        <StackLayout>
+            <Label Text="Images" HorizontalOptions="CenterAndExpand" />
+            <Button Text="Attach image" Command="{Binding open_file}" />
+        </StackLayout>
+    </ContentPage>
+
+    <ContentPage>
+        <StackLayout>
+            <Label Text="Tags" HorizontalOptions="CenterAndExpand" />
+        </StackLayout>
+    </ContentPage>
+</CarouselPage>

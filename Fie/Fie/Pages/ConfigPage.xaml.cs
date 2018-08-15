@@ -80,14 +80,15 @@ namespace Fie.Pages {
         public Command connect_twitter { private set; get; }
         public Command reset_twitter { private set; get; }
 
+
         //Settings change event
-        public event PropertyChangedEventHandler setting_change;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         protected void on_setting_change(string name) {
 #if DEBUG
             Console.WriteLine("Fie: setting {0} is changed", name);
 #endif
-            setting_change?.Invoke(this, new PropertyChangedEventArgs(name));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
             is_setting_changed = true;
             save_command.ChangeCanExecute();
         }
