@@ -29,8 +29,10 @@ namespace API {
     }
 
     public class TwitterConsumerKeys {
-        private const string CONSUMER_KEY_R_NAME = "consumer_key.txt";
-        private const string CONSUMER_SECRET_R_NAME = "consumer_secret.txt";
+        //Note embedded resource should be specified as if it would be module
+
+        private const string CONSUMER_KEY_R_NAME = "API.consumer_key.txt";
+        private const string CONSUMER_SECRET_R_NAME = "API.consumer_secret.txt";
 
         public string key { get; private set; }
         public string secret { get; private set; }
