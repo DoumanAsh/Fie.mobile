@@ -1,7 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <CarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+              xmlns:models="clr-namespace:Fie.Data.HomePage"
               x:Class="Fie.Pages.HomePage">
+    <CarouselPage.BindingContext>
+        <models:ViewModel/>
+    </CarouselPage.BindingContext>
+
     <ContentPage>
         <StackLayout>
             <Label Text="Share Post" HorizontalOptions="CenterAndExpand" />
@@ -20,6 +25,22 @@
     <ContentPage>
         <StackLayout>
             <Label Text="Tags" HorizontalOptions="CenterAndExpand" />
+
+            <ListView ItemsSource="{Binding list_tags}" >
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <FlexLayout AlignItems="Center" Margin="2,0,2,0">
+                                <Entry Text="{Binding text, Mode=TwoWay}" Placeholder="Enter tag" FlexLayout.Grow="1" />
+                                <Label Text="X" TextColor="Red" FontSize="Large" Margin="2"/>
+                            </FlexLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <Button Text="Add new" Command="{Binding new_tag}" />
+
         </StackLayout>
     </ContentPage>
 </CarouselPage>
