@@ -12,9 +12,6 @@ namespace Fie {
         private ApiConfig api_config = ApiConfig.with(null);
 
         public App() {
-#if DEBUG
-            Console.WriteLine("Fie: Start App");
-#endif
             InitializeComponent();
             MainPage = new MasterPage.Root();
         }

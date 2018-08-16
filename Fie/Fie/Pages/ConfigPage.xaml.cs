@@ -129,7 +129,7 @@ namespace Fie.Pages {
 
             var twatter = new API.Twitter();
             var url = twatter.get_auth();
-            var page = new UtilsPages.WebPageView(url, async (res) => {
+            var page = new UtilsPages.WebPageView(url, GET_PIN, async (res) => {
                 string pin = null;
                 var split = res.Split(':');
                 if (split.Length > 1) {
@@ -150,7 +150,7 @@ namespace Fie.Pages {
                     await DisplayAlert("No PIN", "PIN is not found. Make sure to log in and authorize app.", "Ok");
                     return false;
                 }
-            }, GET_PIN);
+            }, () => msg_center_creds_unsubscribe());
 
             Navigation.PushModalAsync(page);
         }

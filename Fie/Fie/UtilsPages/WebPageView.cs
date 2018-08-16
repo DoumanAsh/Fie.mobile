@@ -2,7 +2,8 @@
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-using CallbackType = System.Func<string, System.Threading.Tasks.Task<bool>>;
+using DoneCallbackType = System.Func<string, System.Threading.Tasks.Task<bool>>;
+using BackCallbackType = System.Action;
 
 namespace Fie.UtilsPages {
 
@@ -16,11 +17,13 @@ namespace Fie.UtilsPages {
     /// </summary>
     public class WebPageView : ContentPage {
         private WebView web_view;
-        private CallbackType cb;
+        private DoneCallbackType done_cb;
+        private BackCallbackType back_cb;
         private string to_eval;
 
-        public WebPageView(string url, CallbackType cb, string to_eval) {
-            this.cb = cb;
+        public WebPageView(string url, string to_eval, DoneCallbackType done_cb, BackCallbackType back_cb = null) {
+            this.done_cb = done_cb;
+            this.back_cb = back_cb;
             this.to_eval = to_eval;
 
             var button = new Button {
@@ -67,16 +70,21 @@ namespace Fie.UtilsPages {
 #endif
             }
 
-            var is_exit = await cb(result ?? string.Empty);
+            var is_exit = await done_cb(result ?? string.Empty);
 
             if (is_exit) {
+                back_cb = null;
                 await Navigation.PopModalAsync();
             }
         }
 
         protected override void OnDisappearing() {
+            if (back_cb != null) {
+                back_cb();
+                back_cb = null;
+            }
             web_view = null;
-            cb = null;
+            done_cb = null;
             to_eval = null;
             base.OnDisappearing();
         }
