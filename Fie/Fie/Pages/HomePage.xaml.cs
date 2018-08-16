@@ -16,6 +16,8 @@ namespace Fie.Pages {
         public Command post_tweet { private set; get; }
         public Command open_file { private set; get; }
 
+        //TODO: We override's page PropertyChanged here
+        //Consider should I supress or just make dummy model-controller class?
         //Settings change event
         public event PropertyChangedEventHandler PropertyChanged;
         protected void on_property_change([CallerMemberName] string name = null) {

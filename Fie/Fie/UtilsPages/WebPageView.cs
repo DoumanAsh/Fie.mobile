@@ -2,14 +2,24 @@
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
+using CallbackType = System.Func<string, System.Threading.Tasks.Task<bool>>;
+
 namespace Fie.UtilsPages {
 
+    /// <summary>
+    /// Provides utility WebView that allows to acces web page
+    /// and perform task when user done.
+    /// 
+    /// The callback can return false to indicate that
+    /// task is not done yet, in which case view shall not
+    /// exit
+    /// </summary>
     public class WebPageView : ContentPage {
         private WebView web_view;
-        private Func<string, Task> cb;
+        private CallbackType cb;
         private string to_eval;
 
-        public WebPageView(string url, Func<string, Task> cb, string to_eval) {
+        public WebPageView(string url, CallbackType cb, string to_eval) {
             this.cb = cb;
             this.to_eval = to_eval;
 
@@ -46,11 +56,7 @@ namespace Fie.UtilsPages {
             };
         }
 
-        protected override bool OnBackButtonPressed() {
-            return false;
-        }
-
-        protected async Task<Page> on_finish() {
+        protected async Task on_finish() {
             //NOTE: WebView methods must be called on the same thread....
             string result = null;
             try {
@@ -61,8 +67,11 @@ namespace Fie.UtilsPages {
 #endif
             }
 
-            if (result != null) await cb(result);
-            return await Navigation.PopModalAsync();
+            var is_exit = await cb(result ?? string.Empty);
+
+            if (is_exit) {
+                await Navigation.PopModalAsync();
+            }
         }
 
         protected override void OnDisappearing() {

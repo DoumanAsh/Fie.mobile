@@ -69,10 +69,13 @@ namespace Fie.Pages {
             MessagingCenter.Subscribe<ConfigPage, ITwitterCredentials>(this, "set_creds", (sender, creds) => {
                 this.twitter_access_key = creds.AccessToken;
                 this.twitter_access_secret = creds.AccessTokenSecret;
-                MessagingCenter.Unsubscribe<ConfigPage, ITwitterCredentials>(this, "set_creds");
+                msg_center_creds_unsubscribe();
                 reset_twitter.ChangeCanExecute();
                 connect_twitter.ChangeCanExecute();
             });
+        }
+        protected void msg_center_creds_unsubscribe() {
+            MessagingCenter.Unsubscribe<ConfigPage, ITwitterCredentials>(this, "set_creds");
         }
 
         //Commands
@@ -126,7 +129,7 @@ namespace Fie.Pages {
 
             var twatter = new API.Twitter();
             var url = twatter.get_auth();
-            var page = new UtilsPages.WebPageView(url, (res) => {
+            var page = new UtilsPages.WebPageView(url, async (res) => {
                 string pin = null;
                 var split = res.Split(':');
                 if (split.Length > 1) {
@@ -142,8 +145,11 @@ namespace Fie.Pages {
                     var creds = twatter.set_pin(pin);
                     //Use message here to properly update value on UI thread.
                     MessagingCenter.Send<ConfigPage, ITwitterCredentials>(this, "set_creds", creds);
+                    return true;
+                } else {
+                    await DisplayAlert("No PIN", "PIN is not found. Make sure to log in and authorize app.", "Ok");
+                    return false;
                 }
-                return Task.FromResult(0);
             }, GET_PIN);
 
             Navigation.PushModalAsync(page);
