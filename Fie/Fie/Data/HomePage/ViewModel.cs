@@ -7,6 +7,7 @@ using Xamarin.Forms;
 
 namespace Fie.Data.HomePage {
     public class Tag : INotifyPropertyChanged {
+        public int id;
         public string _text;
         public string text {
             set {
@@ -21,9 +22,24 @@ namespace Fie.Data.HomePage {
         void on_property_change([CallerMemberName] string name = null) {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+
+        public override string ToString() {
+            return _text;
+        }
+
+        public override int GetHashCode() {
+            return base.GetHashCode();
+        }
+
+        public override bool Equals(object obj) {
+            return !(obj is Tag right) ? false : this.id == right.id;
+        }
     }
 
     public class ViewModel : INotifyPropertyChanged {
+        //Utility to mark with uniquness tags
+        public int current_idx = 0;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void on_property_change([CallerMemberName] string name = null) {
@@ -33,7 +49,7 @@ namespace Fie.Data.HomePage {
         public Command post_tweet { private set; get; }
         public Command open_file { private set; get; }
         public Command new_tag { private set; get; }
-        public Command<int> delete_tag { private set; get; }
+        public Command<Tag> delete_tag { private set; get; }
 
         public ObservableCollection<Tag> list_tags { get; set; } = new ObservableCollection<Tag> { };
 
@@ -93,13 +109,15 @@ namespace Fie.Data.HomePage {
             new_tag = new Command(
                 execute: () => {
                     list_tags.Add(new Tag {
-                        text = "New tag"
+                        text = "",
+                        id = current_idx
                     });
+                    current_idx += 1;
                 }
             );
-            delete_tag = new Command<int>(
-                execute: (idx) => {
-                    list_tags.RemoveAt(idx);
+            delete_tag = new Command<Tag>(
+                execute: (self) => {
+                    list_tags.Remove(self);
                 }
             );
         }
