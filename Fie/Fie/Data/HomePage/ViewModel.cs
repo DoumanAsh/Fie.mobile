@@ -3,6 +3,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
+using Config;
 using Xamarin.Forms;
 
 namespace Fie.Data.HomePage {
@@ -37,6 +39,7 @@ namespace Fie.Data.HomePage {
     }
 
     public class ViewModel : INotifyPropertyChanged {
+        private ApiConfig config;
         //Utility to mark with uniquness tags
         public int current_idx = 0;
 
@@ -46,7 +49,7 @@ namespace Fie.Data.HomePage {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        public Command post_tweet { private set; get; }
+        public Command post { private set; get; }
         public Command open_file { private set; get; }
         public Command new_tag { private set; get; }
         public Command<Tag> delete_tag { private set; get; }
@@ -61,7 +64,7 @@ namespace Fie.Data.HomePage {
             set {
                 _text = value;
                 on_property_change();
-                post_tweet.ChangeCanExecute();
+                post.ChangeCanExecute();
             }
             get => _text;
         }
@@ -101,24 +104,39 @@ namespace Fie.Data.HomePage {
             return buffer.ToString();
         }
 
+        private async Task<bool> post_tweet(string text) {
+            try {
+                await API.Twitter.post_tweet(text, new API.Options());
+
+                return true;
+            } catch (Exception error) {
+#if DEBUG
+                Console.WriteLine("Fie: error: {0}", error);
+#endif
+                MessagingCenter.Send(this, Misc.DisplayAlert.NAME, new Misc.DisplayAlert {
+                    title = "Failed to post",
+                    message = "Error posting on twitter",
+                    accept = "Ok",
+                });
+
+                return false;
+            }
+        }
+
         public ViewModel() {
-            post_tweet = new Command(
+            config = ((App)Application.Current).config();
+
+            post = new Command(
                 execute: async () => {
                     string post_text = get_post_text();
+                    bool finished = false;
 
-                    try {
-                        var task = API.Twitter.post_tweet(post_text, new API.Options());
+                    if (this.config.twitter.enabled) {
+                        finished = await this.post_tweet(post_text);
+                    }
+
+                    if (finished) {
                         after_post();
-                        await task;
-                    } catch (Exception error) {
-#if DEBUG
-                        Console.WriteLine("Fie: error: {0}", error);
-#endif
-                        MessagingCenter.Send(this, Misc.DisplayAlert.NAME, new Misc.DisplayAlert {
-                            title = "Failed to post",
-                            message = "Error posting on twitter",
-                            accept = "Ok",
-                        });
                     }
                 },
                 canExecute: () => {

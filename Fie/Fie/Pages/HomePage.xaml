@@ -12,7 +12,7 @@
         <StackLayout>
             <Label Text="Share Post" HorizontalOptions="CenterAndExpand" />
             <Editor Text="{Binding text, Mode=TwoWay}" AutoSize="TextChanges" Keyboard="Chat"/>
-            <Button Text="Post" Command="{Binding post_tweet}" />
+            <Button Text="Post" Command="{Binding post}" />
         </StackLayout>
     </ContentPage>
 
