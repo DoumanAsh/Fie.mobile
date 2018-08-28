@@ -5,9 +5,25 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Config;
+using Plugin.FilePicker;
+using Plugin.FilePicker.Abstractions;
 using Xamarin.Forms;
 
 namespace Fie.Data.HomePage {
+    public class Image {
+        public int id;
+        public string mime;
+        public FileData data;
+
+        public string file_name {
+            get => data.FileName;
+        }
+
+        public override bool Equals(object obj) {
+            return !(obj is Image right) ? false : this.id == right.id;
+        }
+    }
+
     public class Tag : INotifyPropertyChanged {
         public int id;
         public string _text;
@@ -53,9 +69,13 @@ namespace Fie.Data.HomePage {
         public Command open_file { private set; get; }
         public Command new_tag { private set; get; }
         public Command<Tag> delete_tag { private set; get; }
+        public Command<Image> delete_image { private set; get; }
 
         public int list_tags_size = 0;
         public ObservableCollection<Tag> list_tags { get; set; } = new ObservableCollection<Tag> { };
+        private int IMAGES_MAX_SIZE = 4;
+        public int list_images_size = 0;
+        public ObservableCollection<Image> list_images { get; set; } = new ObservableCollection<Image> { };
 
         //Post's text
         private string _text;
@@ -104,6 +124,40 @@ namespace Fie.Data.HomePage {
             return buffer.ToString();
         }
 
+        private async Task pick_file() {
+            FileData file_data = await CrossFilePicker.Current.PickFile();
+            if (file_data == null) {
+#if DEBUG
+                Console.WriteLine("Fie: No file is choose");
+#endif
+                return; // user canceled file picking
+            }
+
+            var mime = API.API.guess_image_mime(file_data.FileName);
+#if DEBUG
+            Console.WriteLine("Fie: Image name chosen: {0}", file_data.FilePath);
+#endif
+            if (mime == null) {
+                //unsupported image type
+#if DEBUG
+                Console.WriteLine("Fie: Invalid image type");
+#endif
+                file_data.Dispose();
+                return;
+            }
+
+            list_images.Add(new Image {
+                mime = mime,
+                data = file_data,
+                id = current_idx,
+            });
+            list_images_size += 1;
+            current_idx += 1;
+            open_file.ChangeCanExecute();
+
+            return;
+        }
+
         private async Task<bool> post_tweet(string text) {
             try {
                 await API.Twitter.post_tweet(text, new API.Options());
@@ -144,11 +198,11 @@ namespace Fie.Data.HomePage {
                 }
             );
             open_file = new Command(
-                execute: () => {
-                    Console.WriteLine("Fie: pick file");
+                execute: async () => {
+                    await this.pick_file();
                 },
                 canExecute: () => {
-                    return true;
+                    return list_images_size < IMAGES_MAX_SIZE;
                 }
             );
             new_tag = new Command(
@@ -165,6 +219,13 @@ namespace Fie.Data.HomePage {
                 execute: (self) => {
                     list_tags.Remove(self);
                     list_tags_size -= 1;
+                }
+            );
+            delete_image = new Command<Image>(
+                execute: (self) => {
+                    list_images.Remove(self);
+                    list_images_size -= 1;
+                    open_file.ChangeCanExecute();
                 }
             );
         }

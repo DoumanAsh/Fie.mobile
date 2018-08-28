@@ -95,5 +95,30 @@ namespace API {
     }
 
     public class API {
+        /// <summary>
+        /// Determines whether provided file name belongs to supported image or not
+        /// </summary>
+        /// <param name="file_name"> File name to check.</param>
+        /// <returns>Mime type of supported image, if file is unsupported then null</returns>
+        public static string guess_image_mime(string file_name) {
+            var dot_idx = file_name.LastIndexOf('.');
+
+            if (dot_idx != -1 && file_name.Length > (dot_idx + 1)) {
+                var extension = file_name.Substring(dot_idx + 1);
+
+                switch (extension.ToLower()) {
+                    case "png":
+                        return "image/png";
+                    case "jpg":
+                    case "jpe":
+                    case "jpeg":
+                        return "image/jpeg";
+                    default:
+                        break;
+                }
+            }
+
+            return null;
+        }
     }
 }
