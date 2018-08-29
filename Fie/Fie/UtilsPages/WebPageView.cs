@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
+using Logging;
+
 using DoneCallbackType = System.Func<string, System.Threading.Tasks.Task<bool>>;
 using BackCallbackType = System.Action;
 
@@ -65,9 +67,7 @@ namespace Fie.UtilsPages {
             try {
                 result = await web_view.EvaluateJavaScriptAsync(to_eval);
             } catch {
-#if DEBUG
-                Console.WriteLine("Fie: JS exception");
-#endif
+                Debug.log("Fie: JS exception");
             }
 
             var is_exit = await done_cb(result ?? string.Empty);

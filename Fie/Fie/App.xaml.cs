@@ -3,6 +3,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 using Config;
+using Logging;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace Fie {
@@ -20,9 +21,9 @@ namespace Fie {
         protected void load_config() {
             try {
                 var config = (string)this.Properties[CONFIG];
-#if DEBUG
-                Console.WriteLine("Fie: Stored config: {0}", config);
-#endif
+
+                Debug.log("Fie: Stored config: {0}", config);
+
                 this.api_config = ApiConfig.deserialize(config);
 
                 if (this.api_config.twitter.access.key != null && this.api_config.twitter.access.secret != null) {
@@ -31,9 +32,7 @@ namespace Fie {
             } catch (System.Collections.Generic.KeyNotFoundException) {
                 this.save_config();
             } catch (Exception unexpected) {
-#if DEBUG
-                Console.WriteLine("Fie: Unexpected exception: {0}", unexpected);
-#endif
+                Debug.log("Fie: Unexpected exception: {0}", unexpected);
                 this.save_config();
             }
         }
@@ -53,16 +52,12 @@ namespace Fie {
         }
 
         protected override void OnStart() {
-#if DEBUG
-            Console.WriteLine("Fie: Started");
-#endif
+            Debug.log("Fie: Started");
             load_config();
         }
 
         protected override void OnSleep() {
-#if DEBUG
-            Console.WriteLine("Fie: Sleep");
-#endif
+            Debug.log("Fie: Sleep");
             this.save_config();
         }
 

@@ -4,12 +4,14 @@ using System.ComponentModel;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-using Config;
 using System.Windows.Input;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using Tweetinvi.Models;
+
+using Config;
+using Logging;
 
 namespace Fie.Pages {
 
@@ -88,9 +90,7 @@ namespace Fie.Pages {
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void on_setting_change(string name) {
-#if DEBUG
-            Console.WriteLine("Fie: setting {0} is changed", name);
-#endif
+            Debug.log("Fie: setting {0} is changed", name);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
             is_setting_changed = true;
             save_command.ChangeCanExecute();
@@ -138,9 +138,9 @@ namespace Fie.Pages {
                         pin = null;
                     }
                 }
-#if DEBUG
-                Console.WriteLine("Fie: Pin={0}", pin);
-#endif
+
+                Debug.log("Fie: Pin={0}", pin);
+
                 if (pin != null) {
                     var creds = twatter.set_pin(pin);
                     //Use message here to properly update value on UI thread.

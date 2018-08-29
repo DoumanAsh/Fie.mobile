@@ -4,10 +4,12 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using Config;
 using Plugin.FilePicker;
 using Plugin.FilePicker.Abstractions;
 using Xamarin.Forms;
+
+using Config;
+using Logging;
 
 namespace Fie.Data.HomePage {
     public class Image {
@@ -131,21 +133,16 @@ namespace Fie.Data.HomePage {
         private async Task pick_file() {
             FileData file_data = await CrossFilePicker.Current.PickFile();
             if (file_data == null) {
-#if DEBUG
-                Console.WriteLine("Fie: No file is choose");
-#endif
+                Debug.log("Fie: No file is choose");
                 return; // user canceled file picking
             }
 
             var mime = API.API.guess_image_mime(file_data.FileName);
-#if DEBUG
-            Console.WriteLine("Fie: Image name chosen: {0}", file_data.FilePath);
-#endif
+            Debug.log("Fie: Image name chosen: {0}", file_data.FilePath);
+
             if (mime == null) {
                 //unsupported image type
-#if DEBUG
-                Console.WriteLine("Fie: Invalid image type");
-#endif
+                Debug.log("Fie: Invalid image type");
                 file_data.Dispose();
                 return;
             }
@@ -168,9 +165,7 @@ namespace Fie.Data.HomePage {
 
                 return true;
             } catch (Exception error) {
-#if DEBUG
-                Console.WriteLine("Fie: error: {0}", error);
-#endif
+                Debug.log("Fie: error: {0}", error);
                 MessagingCenter.Send(this, Misc.DisplayAlert.NAME, new Misc.DisplayAlert {
                     title = "Failed to post",
                     message = "Error posting on twitter",

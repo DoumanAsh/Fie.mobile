@@ -12,6 +12,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\API\API.csproj" />
     <ProjectReference Include="..\..\Config\Config.csproj" />
+    <ProjectReference Include="..\..\Logging\Logging.csproj" />
   </ItemGroup>
 
   <ItemGroup>
