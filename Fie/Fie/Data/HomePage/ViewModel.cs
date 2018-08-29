@@ -19,6 +19,10 @@ namespace Fie.Data.HomePage {
             get => data.FileName;
         }
 
+        public override int GetHashCode() {
+            return base.GetHashCode();
+        }
+
         public override bool Equals(object obj) {
             return !(obj is Image right) ? false : this.id == right.id;
         }
