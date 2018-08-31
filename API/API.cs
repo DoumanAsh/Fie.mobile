@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -8,21 +9,30 @@ using Tweetinvi.Models;
 using Tweetinvi.Parameters;
 
 namespace API {
+    public class Image {
+        public string mime;
+        public string file_name;
+        public byte[] data;
+    }
 
     public class Options {
         public bool nsfw = false;
-        public List<byte[]> images;
+        public List<Image> images;
 
         public Options set_nsfw() {
             nsfw = true;
             return this;
         }
 
-        public Options add_image(byte[] image) {
+        public Options add_image(string mime, string file_name, byte[] image) {
             if (images is null) {
-                images = new List<byte[]>(1);
+                images = new List<Image>(1);
             }
-            images.Add(image);
+            images.Add(new Image {
+                mime = mime,
+                file_name = file_name,
+                data = image,
+            });
 
             return this;
         }
@@ -85,7 +95,7 @@ namespace API {
                 };
 
                 if (opts.images != null) {
-                    options.MediaBinaries = opts.images;
+                    options.MediaBinaries = opts.images.Select(img => img.data).ToList();
                 }
                 return Tweet.PublishTweet(text, options);
             });

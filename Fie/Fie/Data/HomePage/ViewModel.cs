@@ -111,6 +111,10 @@ namespace Fie.Data.HomePage {
             //TODO: give option to not clear tags?
             list_tags.Clear();
             list_tags_size = 0;
+
+            list_images.Clear();
+            list_images_size = 0;
+            open_file.ChangeCanExecute();
         }
 
         private string get_post_text() {
@@ -159,9 +163,9 @@ namespace Fie.Data.HomePage {
             return;
         }
 
-        private async Task<bool> post_tweet(string text) {
+        private async Task<bool> post_tweet(string text, API.Options opts) {
             try {
-                await API.Twitter.post_tweet(text, new API.Options());
+                await API.Twitter.post_tweet(text, opts);
 
                 return true;
             } catch (Exception error) {
@@ -181,15 +185,31 @@ namespace Fie.Data.HomePage {
 
             post = new Command(
                 execute: async () => {
+                    Debug.log("Fie: post");
                     string post_text = get_post_text();
                     bool finished = false;
 
+                    var opts = new API.Options();
+
+                    foreach (var img in list_images) {
+                        Debug.log("Fie: add_image");
+                        opts.add_image(img.mime, img.file_name, img.data.DataArray);
+                    }
+
                     if (this.config.twitter.enabled) {
-                        finished = await this.post_tweet(post_text);
+                        Debug.log("Fie: twitter post");
+                        finished = await this.post_tweet(post_text, opts);
                     }
 
                     if (finished) {
+                        Debug.log("Fie: finished posting");
                         after_post();
+                        MessagingCenter.Send(this, Misc.DisplayAlert.NAME, new Misc.DisplayAlert {
+                            title = "Success",
+                            message = "Post has been shared on all social medias",
+                            accept = "Ok",
+                        });
+
                     }
                 },
                 canExecute: () => {
