@@ -164,9 +164,9 @@ namespace Fie.Data.HomePage {
 
         private async Task<bool> post_tweet(string text, API.Options opts) {
             try {
-                await API.Twitter.post_tweet(text, opts);
+                var tweet = await API.Twitter.post_tweet(text, opts);
 
-                return true;
+                return tweet != null;
             } catch (Exception error) {
                 Debug.log("Fie: error: {0}", error);
                 MessagingCenter.Send(this, Misc.DisplayAlert.NAME, new Misc.DisplayAlert {
