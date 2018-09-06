@@ -5,6 +5,11 @@
         <UserSecretsId>79a3edd0-2092-40a2-a04d-dcb46d5ca9ed</UserSecretsId>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <DebugType>none</DebugType>
+      <DebugSymbols>false</DebugSymbols>
+    </PropertyGroup>
+
     <ItemGroup>
       <None Remove="consumer_key.txt" />
       <None Remove="consumer_secret.txt" />
