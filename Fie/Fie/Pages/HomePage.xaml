@@ -12,6 +12,15 @@
         <StackLayout>
             <Label Text="Share Post" HorizontalOptions="CenterAndExpand" />
             <Editor Text="{Binding text, Mode=TwoWay}" AutoSize="TextChanges" Keyboard="Chat"/>
+
+            <TableView Intent="Settings">
+                <TableRoot>
+                    <TableSection Title="Post">
+                        <SwitchCell Text="NSFW" On="{Binding nsfw, Mode=TwoWay}" />
+                    </TableSection>
+                </TableRoot>
+            </TableView>
+
             <Button Text="Post" Command="{Binding post}" />
         </StackLayout>
     </ContentPage>

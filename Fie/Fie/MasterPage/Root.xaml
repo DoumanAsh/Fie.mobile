@@ -10,7 +10,7 @@
     <MasterDetailPage.Detail>
         <NavigationPage BarBackgroundColor="teal">
             <x:Arguments>
-                <pages:HomePage />
+                <local:RootDetail />
             </x:Arguments>
         </NavigationPage>
     </MasterDetailPage.Detail>

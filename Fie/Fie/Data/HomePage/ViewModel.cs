@@ -78,10 +78,10 @@ namespace Fie.Data.HomePage {
         public Command<Image> delete_image { private set; get; }
 
         public int list_tags_size = 0;
-        public ObservableCollection<Tag> list_tags { get; set; } = new ObservableCollection<Tag> { };
+        public ObservableCollection<Tag> list_tags { get; set; } = new ObservableCollection<Tag>();
         private int IMAGES_MAX_SIZE = 4;
         public int list_images_size = 0;
-        public ObservableCollection<Image> list_images { get; set; } = new ObservableCollection<Image> { };
+        public ObservableCollection<Image> list_images { get; set; } = new ObservableCollection<Image>();
 
         //Post's text
         private string _text;
@@ -95,19 +95,18 @@ namespace Fie.Data.HomePage {
             get => _text;
         }
 
-        //Tag's text
-        private string _tag;
-
-        public string tag {
+        public bool _nsfw = false;
+        public bool nsfw {
             set {
-                _tag = value;
+                _nsfw = value;
                 on_property_change();
             }
-            get => _tag;
+            get => _nsfw;
         }
 
         private void after_post() {
             text = null;
+            nsfw = false;
             //TODO: give option to not clear tags?
             list_tags.Clear();
             list_tags_size = 0;
@@ -187,9 +186,12 @@ namespace Fie.Data.HomePage {
                 execute: async () => {
                     Debug.log("Fie: post");
                     string post_text = get_post_text();
+                    Debug.log("Fie: Post text={0} | NSFW={1}", post_text, nsfw);
                     bool finished = false;
 
-                    var opts = new API.Options();
+                    var opts = new API.Options {
+                        nsfw = this.nsfw
+                    };
 
                     foreach (var img in list_images) {
                         Debug.log("Fie: add_image");
