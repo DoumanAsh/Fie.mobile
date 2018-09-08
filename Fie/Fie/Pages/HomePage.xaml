@@ -17,6 +17,7 @@
                 <TableRoot>
                     <TableSection Title="Post">
                         <SwitchCell Text="NSFW" On="{Binding nsfw, Mode=TwoWay}" />
+                        <SwitchCell Text="Clear tags after post" On="{Binding clear_tags, Mode=TwoWay}" />
                     </TableSection>
                 </TableRoot>
             </TableView>

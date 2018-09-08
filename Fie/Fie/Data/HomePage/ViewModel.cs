@@ -61,6 +61,7 @@ namespace Fie.Data.HomePage {
     }
 
     public class ViewModel : INotifyPropertyChanged {
+        private bool is_ongoing = false;
         private ApiConfig config;
         //Utility to mark with uniquness tags
         public int current_idx = 0;
@@ -104,12 +105,23 @@ namespace Fie.Data.HomePage {
             get => _nsfw;
         }
 
+        public bool _clear_tags = true;
+        public bool clear_tags {
+            set {
+                _clear_tags = value;
+                on_property_change();
+            }
+            get => _clear_tags;
+        }
+
         private void after_post() {
             text = null;
             nsfw = false;
-            //TODO: give option to not clear tags?
-            list_tags.Clear();
-            list_tags_size = 0;
+
+            if (clear_tags) {
+                list_tags.Clear();
+                list_tags_size = 0;
+            }
 
             list_images.Clear();
             list_images_size = 0;
@@ -166,17 +178,20 @@ namespace Fie.Data.HomePage {
             try {
                 var tweet = await API.Twitter.post_tweet(text, opts);
 
-                return tweet != null;
+                if (tweet != null) {
+                    return true;
+                }
             } catch (Exception error) {
                 Debug.log("Fie: error: {0}", error);
-                MessagingCenter.Send(this, Misc.DisplayAlert.NAME, new Misc.DisplayAlert {
-                    title = "Failed to post",
-                    message = "Error posting on twitter",
-                    accept = "Ok",
-                });
-
-                return false;
             }
+
+            MessagingCenter.Send(this, Misc.DisplayAlert.NAME, new Misc.DisplayAlert {
+                title = "Failed to post",
+                message = "Error posting on twitter",
+                accept = "Ok",
+            });
+
+            return false;
         }
 
         public ViewModel() {
@@ -184,6 +199,10 @@ namespace Fie.Data.HomePage {
 
             post = new Command(
                 execute: async () => {
+                    if (is_ongoing) return;
+
+                    is_ongoing = true;
+                    
                     Debug.log("Fie: post");
                     string post_text = get_post_text();
                     Debug.log("Fie: Post text={0} | NSFW={1}", post_text, nsfw);
@@ -211,8 +230,9 @@ namespace Fie.Data.HomePage {
                             message = "Post has been shared on all social medias",
                             accept = "Ok",
                         });
-
                     }
+
+                    is_ongoing = false;
                 },
                 canExecute: () => {
                     return text != null && text.Length > 0;
