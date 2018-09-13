@@ -9,9 +9,4 @@
     <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="MessagePack" Version="1.7.3.4" />
-    <PackageReference Include="MessagePackAnalyzer" Version="1.6.0" />
-  </ItemGroup>
-
 </Project>

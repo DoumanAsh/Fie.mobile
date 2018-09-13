@@ -21,15 +21,15 @@ namespace Fie {
         protected void load_config() {
             try {
                 var config = (string)this.Properties[CONFIG];
-
-                Debug.log("Fie: Stored config: {0}", config);
-
                 this.api_config = ApiConfig.deserialize(config);
+
+                Debug.log("Fie: Stored config: {0}", api_config);
 
                 if (this.api_config.twitter.access.key != null && this.api_config.twitter.access.secret != null) {
                     API.Twitter.set_creds(this.api_config.twitter.access.key, this.api_config.twitter.access.secret);
                 }
             } catch (System.Collections.Generic.KeyNotFoundException) {
+                Debug.log("Fie: No config is saved");
                 this.save_config();
             } catch (Exception unexpected) {
                 Debug.log("Fie: Unexpected exception: {0}", unexpected);

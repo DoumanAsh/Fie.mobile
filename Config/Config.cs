@@ -1,16 +1,13 @@
 ﻿using System;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization.Json;
 
-using MessagePack;
 
 namespace Config {
 
-    [MessagePackObject]
+    [Serializable]
     public struct Pair {
-
-        [Key("key")]
         public string key;
-
-        [Key("secret")]
         public string secret;
 
         static public Pair constructor(string key, string secret) {
@@ -21,13 +18,9 @@ namespace Config {
         }
     }
 
-    [MessagePackObject]
+    [Serializable]
     public struct Twitter {
-
-        [Key("access")]
         public Pair access;
-
-        [Key("enabled")]
         public bool enabled;
 
         static public Twitter with(Pair? access) {
@@ -36,12 +29,14 @@ namespace Config {
                 enabled = false,
             };
         }
+
+        public override string ToString() {
+            return $"{{ access: {{ key: {access.key}, secret: {access.secret}, enable: {enabled} }}";
+        }
     }
 
-    [MessagePackObject]
+    [Serializable]
     public struct ApiConfig {
-
-        [Key("twitter")]
         public Twitter twitter;
 
         static public ApiConfig with(Twitter? twitter) {
@@ -51,20 +46,32 @@ namespace Config {
         }
 
         public static ApiConfig deserialize(string text) {
-            var bytes = MessagePackSerializer.FromJson(text);
-            return MessagePackSerializer.Deserialize<ApiConfig>(bytes);
+            var buffer = Convert.FromBase64String(text);
+            BinaryFormatter formatter = new BinaryFormatter();
+
+            using (var stream = new System.IO.MemoryStream(buffer)) {
+                return (ApiConfig)formatter.Deserialize(stream);
+            }
         }
 
         public string serialize() {
-            var bytes = MessagePackSerializer.Serialize(this);
-            var result = MessagePackSerializer.ToJson(bytes);
-            return result;
+            BinaryFormatter formatter = new BinaryFormatter();
+
+            using (var buffer = new System.IO.MemoryStream()) {
+                formatter.Serialize(buffer, this);
+                return Convert.ToBase64String(buffer.ToArray());
+
+            }
         }
 
         //Returns whether there at least
         //single API enabled
         public bool is_any_enabled() {
             return twitter.enabled;
+        }
+
+        public override string ToString() {
+            return $"{{Twitter: {twitter} }}";
         }
     }
 }
