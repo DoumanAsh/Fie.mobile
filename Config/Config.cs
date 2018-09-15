@@ -36,12 +36,26 @@ namespace Config {
     }
 
     [Serializable]
+    public struct Gab {
+        public string username;
+        public string passowrd;
+        public bool enabled;
+
+        public override string ToString() {
+            return $"{{ username: {{ username: {username}, passowrd: {passowrd}, enable: {enabled} }}";
+        }
+
+    }
+
+    [Serializable]
     public struct ApiConfig {
         public Twitter twitter;
+        public Gab gab;
 
-        static public ApiConfig with(Twitter? twitter) {
+        static public ApiConfig with(Twitter? twitter, Gab? gab) {
             return new ApiConfig {
-                twitter = twitter.GetValueOrDefault()
+                twitter = twitter.GetValueOrDefault(),
+                gab = gab.GetValueOrDefault(),
             };
         }
 
@@ -67,11 +81,11 @@ namespace Config {
         //Returns whether there at least
         //single API enabled
         public bool is_any_enabled() {
-            return twitter.enabled;
+            return twitter.enabled || gab.enabled;
         }
 
         public override string ToString() {
-            return $"{{Twitter: {twitter} }}";
+            return $"{{Gab: {gab}, Twitter: {twitter} }}";
         }
     }
 }

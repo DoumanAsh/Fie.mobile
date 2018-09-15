@@ -96,6 +96,7 @@ namespace Fie.Data.HomePage {
             get => _text;
         }
 
+        //Settings
         public bool _nsfw = false;
         public bool nsfw {
             set {
@@ -112,6 +113,22 @@ namespace Fie.Data.HomePage {
                 on_property_change();
             }
             get => _clear_tags;
+        }
+
+        //Platforms
+        public bool is_on_twitter {
+            set {
+                this.config.twitter.enabled = value;
+                on_property_change();
+            }
+            get => this.config.twitter.enabled;
+        }
+        public bool is_on_gab {
+            set {
+                this.config.gab.enabled = value;
+                on_property_change();
+            }
+            get => this.config.gab.enabled;
         }
 
         private void after_post() {
@@ -182,12 +199,31 @@ namespace Fie.Data.HomePage {
                     return true;
                 }
             } catch (Exception error) {
-                Debug.log("Fie: error: {0}", error);
+                Debug.log("Fie: Tweet error: {0}", error);
             }
 
             MessagingCenter.Send(this, Misc.DisplayAlert.NAME, new Misc.DisplayAlert {
                 title = "Failed to post",
                 message = "Error posting on twitter",
+                accept = "Ok",
+            });
+
+            return false;
+        }
+
+        private async Task<bool> post_gab(string text, API.Options opts) {
+            try {
+                await API.Gab.login(this.config.gab.username, this.config.gab.passowrd);
+                if (await API.Gab.post(text, opts)) {
+                    return true;
+                }
+            } catch (Exception error) {
+                Debug.log("Fie: Gab error: {0}", error);
+            }
+ 
+            MessagingCenter.Send(this, Misc.DisplayAlert.NAME, new Misc.DisplayAlert {
+                title = "Failed to post",
+                message = "Error posting on gab",
                 accept = "Ok",
             });
 
@@ -200,13 +236,27 @@ namespace Fie.Data.HomePage {
             post = new Command(
                 execute: async () => {
                     if (is_ongoing) return;
+                    else if (!is_on_twitter && !is_on_gab) {
+                        Debug.log("Fie: nothing to do, ignore post");
+                        return;
+                    };
 
                     is_ongoing = true;
                     
                     Debug.log("Fie: post");
                     string post_text = get_post_text();
+
+                    if (this.is_on_twitter && !API.Twitter.can_post(post_text)) {
+                        Debug.log("Fie: Tweet text is too long. Abort");
+                        MessagingCenter.Send(this, Misc.DisplayAlert.NAME, new Misc.DisplayAlert {
+                            title = "Failure",
+                            message = "Tweet size is too big. Trim it down before trying again",
+                            accept = "Ok",
+                        });
+                    }
+
                     Debug.log("Fie: Post text={0} | NSFW={1}", post_text, nsfw);
-                    bool finished = false;
+                    bool finished = true;
 
                     var opts = new API.Options {
                         nsfw = this.nsfw
@@ -217,9 +267,15 @@ namespace Fie.Data.HomePage {
                         opts.add_image(img.mime, img.file_name, img.data.DataArray);
                     }
 
-                    if (this.config.twitter.enabled) {
+                    if (this.is_on_twitter) {
                         Debug.log("Fie: twitter post");
-                        finished = await this.post_tweet(post_text, opts);
+                        var result = await this.post_tweet(post_text, opts);
+                        finished = finished && result;
+                    }
+                    if (this.is_on_gab) {
+                        Debug.log("Fie: gab post");
+                        var result = await this.post_gab(post_text, opts);
+                        finished = finished && result;
                     }
 
                     if (finished) {
@@ -230,6 +286,8 @@ namespace Fie.Data.HomePage {
                             message = "Post has been shared on all social medias",
                             accept = "Ok",
                         });
+                    } else {
+                        Debug.log("Fie: not completely done");
                     }
 
                     is_ongoing = false;

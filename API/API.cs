@@ -84,8 +84,10 @@ namespace API {
             Auth.ApplicationCredentials = new TwitterCredentials(KEYS.key, KEYS.secret, access_key, access_secret);
         }
 
-        public bool can_post(string text) {
-            return Tweet.CanBePublished(text);
+        public static bool can_post(string text) {
+            //Currently the check is commented out.
+            //return Tweet.CanBePublished(text);
+            return TweetinviConsts.MAX_TWEET_SIZE >= Tweetinvi.Controllers.Tweet.TweetController.EstimateTweetLength(text);
         }
 
         public static Task<ITweet> post_tweet(string text, Options opts) {

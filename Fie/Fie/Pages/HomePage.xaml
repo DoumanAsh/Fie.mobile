@@ -19,6 +19,10 @@
                         <SwitchCell Text="NSFW" On="{Binding nsfw, Mode=TwoWay}" />
                         <SwitchCell Text="Clear tags after post" On="{Binding clear_tags, Mode=TwoWay}" />
                     </TableSection>
+                    <TableSection Title="Platforms">
+                        <SwitchCell Text="Twitter" On="{Binding is_on_twitter, Mode=TwoWay}" />
+                        <SwitchCell Text="Gab" On="{Binding is_on_gab, Mode=TwoWay}" />
+                    </TableSection>
                 </TableRoot>
             </TableView>
 

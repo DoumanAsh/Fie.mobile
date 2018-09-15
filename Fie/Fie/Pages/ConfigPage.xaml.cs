@@ -12,6 +12,7 @@ using Tweetinvi.Models;
 
 using Config;
 using Logging;
+using API;
 
 namespace Fie.Pages {
 
@@ -62,6 +63,41 @@ namespace Fie.Pages {
                     return this.twitter_access_key != null || this.twitter_access_secret != null;
                 }
             );
+            login_gab = new Command(
+                execute: async () => {
+                    if (gab_password == null || gab_password.Length == 0) {
+                        await DisplayAlert("Missing password", "Please enter password", "Ok");
+                        return;
+                    }
+                    if (gab_username == null || gab_username.Length == 0) {
+                        await DisplayAlert("Missing username", "Please enter username", "Ok");
+                        return;
+                    }
+                    await API.Gab.login(gab_username, gab_password);
+                    if (API.Gab.is_auth()) {
+                        reset_gab.ChangeCanExecute();
+                        login_gab.ChangeCanExecute();
+                        await DisplayAlert("Gab authorization Ok", "Successuflly authorized. Please save configuration", "Ok");
+                    } else {
+                        await DisplayAlert("Gab authorization Error", "Failed to login. Check your username and password", "Ok");
+                    }
+                },
+                canExecute: () => {
+                    return !API.Gab.is_auth();
+                }
+            );
+            reset_gab = new Command(
+                execute: () => {
+                    API.Gab.reset_token();
+                    gab_username = "";
+                    gab_password = "";
+                    login_gab.ChangeCanExecute();
+                    reset_gab.ChangeCanExecute();
+                },
+                canExecute: () => {
+                    return API.Gab.is_auth();
+                }
+            );
 
             InitializeComponent();
         }
@@ -84,7 +120,8 @@ namespace Fie.Pages {
         public Command save_command { private set; get; }
         public Command connect_twitter { private set; get; }
         public Command reset_twitter { private set; get; }
-
+        public Command login_gab { private set; get; }
+        public Command reset_gab { private set; get; }
 
         //Settings change event
         public event PropertyChangedEventHandler PropertyChanged;
@@ -110,6 +147,12 @@ namespace Fie.Pages {
             get => config.twitter.enabled;
         }
 
+        //Gab ON switch
+        public bool gab_on {
+            set => set_property(ref config.gab.enabled, value);
+            get => config.gab.enabled;
+        }
+
         //Twitter Access's key
         public string twitter_access_key {
             set => set_property(ref config.twitter.access.key, value);
@@ -120,6 +163,16 @@ namespace Fie.Pages {
         public string twitter_access_secret {
             set => set_property(ref config.twitter.access.secret, value);
             get => config.twitter.access.secret;
+        }
+
+        //Gab creds
+        public string gab_username {
+            set => set_property(ref config.gab.username, value);
+            get => config.gab.username;
+        }
+        public string gab_password {
+            set => set_property(ref config.gab.passowrd, value);
+            get => config.gab.passowrd;
         }
 
         private void on_connect_twitter() {

@@ -10,7 +10,7 @@ namespace Fie {
 
     public partial class App : Application {
         protected const string CONFIG = "config";
-        private ApiConfig api_config = ApiConfig.with(null);
+        private ApiConfig api_config = ApiConfig.with(null, null);
 
         public App() {
             InitializeComponent();

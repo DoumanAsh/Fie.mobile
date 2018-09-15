@@ -16,6 +16,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Config", "Config\Config.csproj", "{B7C5AE51-102B-4738-9D96-673EE9C4CA46}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "API\API.csproj", "{2D9C2C65-5869-49B6-A66F-FC732FCCA246}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DC492CD3-F82F-4B14-9AB3-1D6E64670D1B} = {DC492CD3-F82F-4B14-9AB3-1D6E64670D1B}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logging", "Logging\Logging.csproj", "{DC492CD3-F82F-4B14-9AB3-1D6E64670D1B}"
 EndProject
