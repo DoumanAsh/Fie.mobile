@@ -9,6 +9,7 @@
                     <TableSection Title="Platforms">
                         <SwitchCell Text="Enable Twitter" On="{Binding twitter_on, Mode=TwoWay}" />
                         <SwitchCell Text="Enable Gab" On="{Binding gab_on, Mode=TwoWay}" />
+                        <SwitchCell Text="Enable Minds" On="{Binding minds_on, Mode=TwoWay}" />
                     </TableSection>
                 </TableRoot>
             </TableView>
@@ -34,5 +35,17 @@
             <Button Text="Reset" Command="{Binding reset_gab}" />
         </StackLayout>
     </ContentPage>
+
+    <ContentPage>
+        <StackLayout>
+            <Label Text="Minds credentials" HorizontalOptions="CenterAndExpand" />
+            <Entry Text="{Binding minds_username, Mode=TwoWay}" Placeholder="Username"/>
+            <Entry Text="{Binding minds_password, Mode=TwoWay}" Placeholder="Password" IsPassword="True"/>
+
+            <Button Text="Login" Command="{Binding login_minds}" />
+            <Button Text="Reset" Command="{Binding reset_minds}" />
+        </StackLayout>
+    </ContentPage>
+
 
 </CarouselPage>

@@ -98,6 +98,41 @@ namespace Fie.Pages {
                     return API.Gab.is_auth();
                 }
             );
+            login_minds = new Command(
+                execute: async () => {
+                    if (minds_password == null || minds_password.Length == 0) {
+                        await DisplayAlert("Missing password", "Please enter password", "Ok");
+                        return;
+                    }
+                    if (minds_username == null || minds_username.Length == 0) {
+                        await DisplayAlert("Missing username", "Please enter username", "Ok");
+                        return;
+                    }
+                    await API.Minds.login(minds_username, minds_password);
+                    if (API.Minds.is_auth()) {
+                        reset_minds.ChangeCanExecute();
+                        login_minds.ChangeCanExecute();
+                        await DisplayAlert("Minds authorization Ok", "Successuflly authorized. Please save configuration", "Ok");
+                    } else {
+                        await DisplayAlert("Minds authorization Error", "Failed to login. Check your username and password", "Ok");
+                    }
+                },
+                canExecute: () => {
+                    return !API.Minds.is_auth();
+                }
+            );
+            reset_minds = new Command(
+                execute: () => {
+                    API.Minds.reset_token();
+                    minds_username = "";
+                    minds_password = "";
+                    login_minds.ChangeCanExecute();
+                    reset_minds.ChangeCanExecute();
+                },
+                canExecute: () => {
+                    return API.Minds.is_auth();
+                }
+            );
 
             InitializeComponent();
         }
@@ -122,6 +157,8 @@ namespace Fie.Pages {
         public Command reset_twitter { private set; get; }
         public Command login_gab { private set; get; }
         public Command reset_gab { private set; get; }
+        public Command login_minds { private set; get; }
+        public Command reset_minds { private set; get; }
 
         //Settings change event
         public event PropertyChangedEventHandler PropertyChanged;
@@ -153,6 +190,12 @@ namespace Fie.Pages {
             get => config.gab.enabled;
         }
 
+        //Minds ON switch
+        public bool minds_on {
+            set => set_property(ref config.minds.enabled, value);
+            get => config.minds.enabled;
+        }
+
         //Twitter Access's key
         public string twitter_access_key {
             set => set_property(ref config.twitter.access.key, value);
@@ -173,6 +216,16 @@ namespace Fie.Pages {
         public string gab_password {
             set => set_property(ref config.gab.passowrd, value);
             get => config.gab.passowrd;
+        }
+
+        //Minds creds
+        public string minds_username {
+            set => set_property(ref config.minds.username, value);
+            get => config.minds.username;
+        }
+        public string minds_password {
+            set => set_property(ref config.minds.passowrd, value);
+            get => config.minds.passowrd;
         }
 
         private void on_connect_twitter() {

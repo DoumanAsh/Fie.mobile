@@ -130,6 +130,14 @@ namespace Fie.Data.HomePage {
             }
             get => this.config.gab.enabled;
         }
+        public bool is_on_minds {
+            set {
+                this.config.minds.enabled = value;
+                on_property_change();
+            }
+            get => this.config.minds.enabled;
+        }
+        
 
         private void after_post() {
             text = null;
@@ -230,13 +238,33 @@ namespace Fie.Data.HomePage {
             return false;
         }
 
+        private async Task<bool> post_minds(string text, API.Options opts) {
+            try {
+                await API.Minds.login(this.config.minds.username, this.config.minds.passowrd);
+                if (await API.Minds.post(text, opts)) {
+                    return true;
+                }
+            } catch (Exception error) {
+                Debug.log("Fie: Minds error: {0}", error);
+            }
+ 
+            MessagingCenter.Send(this, Misc.DisplayAlert.NAME, new Misc.DisplayAlert {
+                title = "Failed to post",
+                message = "Error posting on minds",
+                accept = "Ok",
+            });
+
+            return false;
+        }
+
+
         public ViewModel() {
             config = ((App)Application.Current).config();
 
             post = new Command(
                 execute: async () => {
                     if (is_ongoing) return;
-                    else if (!is_on_twitter && !is_on_gab) {
+                    else if (!is_on_twitter && !is_on_gab && !is_on_minds) {
                         Debug.log("Fie: nothing to do, ignore post");
                         return;
                     };
@@ -275,6 +303,11 @@ namespace Fie.Data.HomePage {
                     if (this.is_on_gab) {
                         Debug.log("Fie: gab post");
                         var result = await this.post_gab(post_text, opts);
+                        finished = finished && result;
+                    }
+                    if (this.is_on_minds) {
+                        Debug.log("Fie: minds post");
+                        var result = await this.post_minds(post_text, opts);
                         finished = finished && result;
                     }
 

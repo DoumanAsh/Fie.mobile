@@ -36,6 +36,18 @@ namespace Config {
     }
 
     [Serializable]
+    public struct Minds {
+        public string username;
+        public string passowrd;
+        public bool enabled;
+
+        public override string ToString() {
+            return $"{{ username: {{ username: {username}, passowrd: {passowrd}, enable: {enabled} }}";
+        }
+
+    }
+
+    [Serializable]
     public struct Gab {
         public string username;
         public string passowrd;
@@ -51,11 +63,13 @@ namespace Config {
     public struct ApiConfig {
         public Twitter twitter;
         public Gab gab;
+        public Minds minds;
 
-        static public ApiConfig with(Twitter? twitter, Gab? gab) {
+        static public ApiConfig with(Twitter? twitter, Gab? gab, Minds? minds) {
             return new ApiConfig {
                 twitter = twitter.GetValueOrDefault(),
                 gab = gab.GetValueOrDefault(),
+                minds = minds.GetValueOrDefault(),
             };
         }
 
@@ -85,7 +99,7 @@ namespace Config {
         }
 
         public override string ToString() {
-            return $"{{Gab: {gab}, Twitter: {twitter} }}";
+            return $"{{Gab: {gab}, Minds: {minds}, Twitter: {twitter} }}";
         }
     }
 }

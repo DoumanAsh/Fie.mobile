@@ -8,3 +8,4 @@ Mobile port of my [tool](https://github.com/DoumanAsh/fie) for shitposting. WIP
 
 - Twitter
 - Gab.ai
+- Minds

@@ -75,7 +75,7 @@ namespace API {
 
         public static async Task login(string username, string password) {
             if (is_auth()) {
-                Debug.log("Fie: Already logged in");
+                Debug.log("Fie: Already logged in Gab.ai");
                 return;
             }
 
@@ -160,6 +160,11 @@ namespace API {
         }
 
         public static async Task<bool> post(string text, Options opts) {
+            if (!is_auth()) {
+                Debug.log("Fie: Gab Not logged in");
+                return false;
+            }
+
             var client = Http.client();
 
             var gab_post = new GabPost(text, opts);
