@@ -28,7 +28,7 @@
         <StackLayout>
             <Label Text="Gab credentials" HorizontalOptions="CenterAndExpand" />
             <Entry Text="{Binding gab_username, Mode=TwoWay}" Placeholder="Username"/>
-            <Entry Text="{Binding gab_password, Mode=TwoWay}" Placeholder="Password"/>
+            <Entry Text="{Binding gab_password, Mode=TwoWay}" Placeholder="Password" IsPassword="True"/>
 
             <Button Text="Login" Command="{Binding login_gab}" />
             <Button Text="Reset" Command="{Binding reset_gab}" />
