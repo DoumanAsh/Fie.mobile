@@ -6,6 +6,7 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using Logging;
 using System.Net.Http.Headers;
+using System.Net;
 
 namespace API {
     [JsonObject(MemberSerialization.Fields)]
@@ -183,7 +184,14 @@ namespace API {
 
             var post_data = JsonConvert.SerializeObject(gab_post);
 
-            var rsp = await client.PostAsync(POST_URL, new StringContent(post_data, Encoding.UTF8, "application/json"));
+            var request = new HttpRequestMessage(HttpMethod.Post, POST_URL) {
+                Headers = {
+                    { HttpRequestHeader.Authorization.ToString(), $"Bearer {token()}" }
+                },
+                Content = new StringContent(post_data, Encoding.UTF8, "application/json"),
+            };
+
+            var rsp = await client.SendAsync(request);
             if (!rsp.IsSuccessStatusCode) {
                 Debug.log("Fie: Failed to post onto Gab.ai");
                 return false;
