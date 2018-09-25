@@ -20,6 +20,7 @@ namespace Fie.Pages {
     public partial class ConfigPage : CarouselPage, INotifyPropertyChanged {
         public const string TITLE = "Configuration";
         private bool is_setting_changed;
+        private bool is_auth_in_progress;
         private ApiConfig config;
 
         public void unset_setting_change() {
@@ -73,6 +74,13 @@ namespace Fie.Pages {
                         await DisplayAlert("Missing username", "Please enter username", "Ok");
                         return;
                     }
+
+                    if (is_auth_in_progress) {
+                        await DisplayAlert("Gab authorization", "Authroization process is ongoing. Try after it is done", "Ok");
+                        return;
+                    }
+                    is_auth_in_progress = true;
+
                     await API.Gab.login(gab_username, gab_password);
                     if (API.Gab.is_auth()) {
                         reset_gab.ChangeCanExecute();
@@ -81,6 +89,8 @@ namespace Fie.Pages {
                     } else {
                         await DisplayAlert("Gab authorization Error", "Failed to login. Check your username and password", "Ok");
                     }
+
+                    is_auth_in_progress = false;
                 },
                 canExecute: () => {
                     return !API.Gab.is_auth();
@@ -108,6 +118,13 @@ namespace Fie.Pages {
                         await DisplayAlert("Missing username", "Please enter username", "Ok");
                         return;
                     }
+
+                    if (is_auth_in_progress) {
+                        await DisplayAlert("Minds authorization", "Authroization process is ongoing. Try after it is done", "Ok");
+                        return;
+                    }
+                    is_auth_in_progress = true;
+
                     await API.Minds.login(minds_username, minds_password);
                     if (API.Minds.is_auth()) {
                         reset_minds.ChangeCanExecute();
@@ -116,6 +133,7 @@ namespace Fie.Pages {
                     } else {
                         await DisplayAlert("Minds authorization Error", "Failed to login. Check your username and password", "Ok");
                     }
+                    is_auth_in_progress = false;
                 },
                 canExecute: () => {
                     return !API.Minds.is_auth();
