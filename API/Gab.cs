@@ -67,6 +67,10 @@ namespace API {
 
         public static void reset_token() {
             TOKEN = null;
+            //Invalidate previous cookies
+            foreach (var cookie in Http.cookies().GetCookies(new Uri(LOGIN_URL))) {
+                ((Cookie)cookie).Expired = true;
+            }
         }
         
         public static void set_token(string new_token) {

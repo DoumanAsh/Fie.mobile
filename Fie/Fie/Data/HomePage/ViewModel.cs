@@ -10,6 +10,7 @@ using Xamarin.Forms;
 
 using Config;
 using Logging;
+using System.Net.Http;
 
 namespace Fie.Data.HomePage {
     public class Image {
@@ -219,12 +220,24 @@ namespace Fie.Data.HomePage {
             return false;
         }
 
+        void message_network_error() {
+            MessagingCenter.Send(this, Misc.DisplayAlert.NAME, new Misc.DisplayAlert {
+                title = "Network Error",
+                message = "Unable to connect. Please turn on network",
+                accept = "Ok",
+            });
+        }
+
         private async Task<bool> post_gab(string text, API.Options opts) {
             try {
                 await API.Gab.login(this.config.gab.username, this.config.gab.passowrd);
                 if (await API.Gab.post(text, opts)) {
                     return true;
                 }
+            } catch (HttpRequestException error) {
+                Debug.log("Fie: Http error: {0}", error);
+                message_network_error();
+                return false;
             } catch (Exception error) {
                 Debug.log("Fie: Gab error: {0}", error);
             }
@@ -244,6 +257,10 @@ namespace Fie.Data.HomePage {
                 if (await API.Minds.post(text, opts)) {
                     return true;
                 }
+            } catch (HttpRequestException error) {
+                Debug.log("Fie: Http error: {0}", error);
+                message_network_error();
+                return false;
             } catch (Exception error) {
                 Debug.log("Fie: Minds error: {0}", error);
             }

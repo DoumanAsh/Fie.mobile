@@ -13,6 +13,7 @@ using Tweetinvi.Models;
 using Config;
 using Logging;
 using API;
+using System.Net.Http;
 
 namespace Fie.Pages {
 
@@ -81,13 +82,19 @@ namespace Fie.Pages {
                     }
                     is_auth_in_progress = true;
 
-                    await API.Gab.login(gab_username, gab_password);
-                    if (API.Gab.is_auth()) {
-                        reset_gab.ChangeCanExecute();
-                        login_gab.ChangeCanExecute();
-                        await DisplayAlert("Gab authorization Ok", "Successuflly authorized. Please save configuration", "Ok");
-                    } else {
-                        await DisplayAlert("Gab authorization Error", "Failed to login. Check your username and password", "Ok");
+                    try {
+                        await API.Gab.login(gab_username, gab_password);
+
+                        if (API.Gab.is_auth()) {
+                            reset_gab.ChangeCanExecute();
+                            login_gab.ChangeCanExecute();
+                            await DisplayAlert("Gab authorization Ok", "Successuflly authorized. Please save configuration", "Ok");
+                        } else {
+                            await DisplayAlert("Gab authorization Error", "Failed to login. Check your username and password", "Ok");
+                        }
+                    } catch (HttpRequestException error) {
+                        Debug.log("Fie: Http error: {0}", error);
+                        await DisplayAlert("Network Error", "Unable to connect. Please turn on network", "Ok");
                     }
 
                     is_auth_in_progress = false;
@@ -125,13 +132,18 @@ namespace Fie.Pages {
                     }
                     is_auth_in_progress = true;
 
-                    await API.Minds.login(minds_username, minds_password);
-                    if (API.Minds.is_auth()) {
-                        reset_minds.ChangeCanExecute();
-                        login_minds.ChangeCanExecute();
-                        await DisplayAlert("Minds authorization Ok", "Successuflly authorized. Please save configuration", "Ok");
-                    } else {
-                        await DisplayAlert("Minds authorization Error", "Failed to login. Check your username and password", "Ok");
+                    try {
+                        await API.Minds.login(minds_username, minds_password);
+                        if (API.Minds.is_auth()) {
+                            reset_minds.ChangeCanExecute();
+                            login_minds.ChangeCanExecute();
+                            await DisplayAlert("Minds authorization Ok", "Successuflly authorized. Please save configuration", "Ok");
+                        } else {
+                            await DisplayAlert("Minds authorization Error", "Failed to login. Check your username and password", "Ok");
+                        }
+                    } catch (HttpRequestException error) {
+                        Debug.log("Fie: Http error: {0}", error);
+                        await DisplayAlert("Network Error", "Unable to connect. Please turn on network", "Ok");
                     }
                     is_auth_in_progress = false;
                 },
