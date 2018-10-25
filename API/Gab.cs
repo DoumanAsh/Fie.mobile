@@ -51,9 +51,9 @@ namespace API {
     }
 
     public class Gab {
-        const string LOGIN_URL = "https://gab.ai/auth/login";
-        const string IMAGES_URL = "https://gab.ai/api/media-attachments/images";
-        const string POST_URL = "https://gab.ai/posts";
+        const string LOGIN_URL = "https://gab.com/auth/login";
+        const string IMAGES_URL = "https://gab.com/api/media-attachments/images";
+        const string POST_URL = "https://gab.com/posts";
 
         private static string TOKEN = null;
 

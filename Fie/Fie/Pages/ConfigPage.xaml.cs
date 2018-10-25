@@ -95,6 +95,9 @@ namespace Fie.Pages {
                     } catch (HttpRequestException error) {
                         Debug.log("Fie: Http error: {0}", error);
                         await DisplayAlert("Network Error", "Unable to connect. Please turn on network", "Ok");
+                    } catch (Exception error) {
+                        Debug.log("Fie: Unknown error: {0}", error);
+                        await DisplayAlert("Internal Error", "Unable to connect. Please turn on network", "Ok");
                     }
 
                     is_auth_in_progress = false;
@@ -144,7 +147,11 @@ namespace Fie.Pages {
                     } catch (HttpRequestException error) {
                         Debug.log("Fie: Http error: {0}", error);
                         await DisplayAlert("Network Error", "Unable to connect. Please turn on network", "Ok");
+                    } catch (Exception error) {
+                        Debug.log("Fie: Unknown error: {0}", error);
+                        await DisplayAlert("Internal Error", "Unable to connect. Please turn on network", "Ok");
                     }
+
                     is_auth_in_progress = false;
                 },
                 canExecute: () => {
