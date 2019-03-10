@@ -170,6 +170,42 @@ namespace Fie.Pages {
                     return API.Minds.is_auth();
                 }
             );
+            login_mastodon = new Command(
+                execute: async () => {
+                    if (mastodon_host == null || mastodon_host.Length == 0) {
+                        await DisplayAlert("Missing host", "Please enter host", "Ok");
+                        return;
+                    }
+                    if (mastodon_access_token == null || mastodon_access_token.Length == 0) {
+                        await DisplayAlert("Missing access token", "Please enter access token", "Ok");
+                        return;
+                    }
+
+                    if (API.Mastodon.configure(mastodon_host, mastodon_access_token)) {
+                        reset_mastodon.ChangeCanExecute();
+                        login_mastodon.ChangeCanExecute();
+                        await DisplayAlert("Mastodon config OK", "Configuration is set", "Ok");
+                    } else {
+                        await DisplayAlert("Mastodon config Error", "Invalid host name, Please make sure to input right one", "Ok");
+                    }
+                },
+                canExecute: () => {
+                    return !API.Mastodon.is_auth();
+                }
+            );
+            reset_mastodon = new Command(
+                execute: () => {
+                    API.Mastodon.reset();
+                    mastodon_host = "";
+                    mastodon_access_token = "";
+                    login_mastodon.ChangeCanExecute();
+                    reset_mastodon.ChangeCanExecute();
+                },
+                canExecute: () => {
+                    return API.Mastodon.is_auth();
+                }
+            );
+
 
             InitializeComponent();
         }
@@ -196,6 +232,8 @@ namespace Fie.Pages {
         public Command reset_gab { private set; get; }
         public Command login_minds { private set; get; }
         public Command reset_minds { private set; get; }
+        public Command login_mastodon { private set; get; }
+        public Command reset_mastodon { private set; get; }
 
         //Settings change event
         public event PropertyChangedEventHandler PropertyChanged;
@@ -232,6 +270,11 @@ namespace Fie.Pages {
             set => set_property(ref config.minds.enabled, value);
             get => config.minds.enabled;
         }
+        //Mastodon ON switch
+        public bool mastodon_on {
+            set => set_property(ref config.mastodon.enabled, value);
+            get => config.mastodon.enabled;
+        }
 
         //Twitter Access's key
         public string twitter_access_key {
@@ -263,6 +306,15 @@ namespace Fie.Pages {
         public string minds_password {
             set => set_property(ref config.minds.passowrd, value);
             get => config.minds.passowrd;
+        }
+        //Mastodon creds
+        public string mastodon_host {
+            set => set_property(ref config.mastodon.host, value);
+            get => config.mastodon.host;
+        }
+        public string mastodon_access_token {
+            set => set_property(ref config.mastodon.access_token, value);
+            get => config.mastodon.access_token;
         }
 
         private void on_connect_twitter() {

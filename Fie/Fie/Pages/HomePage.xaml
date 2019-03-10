@@ -23,6 +23,7 @@
                         <SwitchCell Text="Twitter" On="{Binding is_on_twitter, Mode=TwoWay}" />
                         <SwitchCell Text="Gab" On="{Binding is_on_gab, Mode=TwoWay}" />
                         <SwitchCell Text="Minds" On="{Binding is_on_minds, Mode=TwoWay}" />
+                        <SwitchCell Text="Mastodon" On="{Binding is_on_mastodon, Mode=TwoWay}" />
                     </TableSection>
                 </TableRoot>
             </TableView>

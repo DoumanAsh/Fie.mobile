@@ -9,6 +9,7 @@
                     <TableSection Title="Platforms">
                         <SwitchCell Text="Enable Twitter" On="{Binding twitter_on, Mode=TwoWay}" />
                         <SwitchCell Text="Enable Gab" On="{Binding gab_on, Mode=TwoWay}" />
+                        <SwitchCell Text="Enable Mastodon" On="{Binding mastodon_on, Mode=TwoWay}" />
                         <SwitchCell Text="Enable Minds" On="{Binding minds_on, Mode=TwoWay}" />
                     </TableSection>
                 </TableRoot>
@@ -35,6 +36,18 @@
             <Button Text="Reset" Command="{Binding reset_gab}" />
         </StackLayout>
     </ContentPage>
+
+    <ContentPage>
+        <StackLayout>
+            <Label Text="Mastodon config" HorizontalOptions="CenterAndExpand" />
+            <Entry Text="{Binding mastodon_host, Mode=TwoWay}" Placeholder="Host"/>
+            <Entry Text="{Binding mastodon_access_token, Mode=TwoWay}" Placeholder="Access token"/>
+
+            <Button Text="Login" Command="{Binding login_mastodon}" />
+            <Button Text="Reset" Command="{Binding reset_mastodon}" />
+        </StackLayout>
+    </ContentPage>
+
 
     <ContentPage>
         <StackLayout>

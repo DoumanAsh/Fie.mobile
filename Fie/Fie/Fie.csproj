@@ -7,11 +7,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
+    <DefineConstants />
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="3.3.0.912540" />
-    <PackageReference Include="Xamarin.Plugin.FilePicker" Version="2.0.81-beta" />
+    <PackageReference Include="Xamarin.Forms" Version="4.0.0.169046-pre5" />
+    <PackageReference Include="Xamarin.Plugin.FilePicker" Version="2.1.14-beta" />
   </ItemGroup>
 
   <ItemGroup>

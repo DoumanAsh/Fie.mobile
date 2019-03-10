@@ -38,8 +38,7 @@ namespace API {
     [JsonObject(MemberSerialization.Fields)]
     class MindsAuth {
         public string grant_type = "password";
-        public string client_id = "";
-        public string client_secret = "";
+        public string client_id = "mobile";
         public string username;
         public string password;
 
@@ -57,7 +56,7 @@ namespace API {
     }
     
     public class Minds {
-        const string LOGIN_URL = "https://www.minds.com/oauth2/token";
+        const string LOGIN_URL = "https://www.minds.com/api/v2/oauth/token";
         const string IMAGES_URL = "https://www.minds.com/api/v1/media";
         const string POST_URL = "https://www.minds.com/api/v1/newsfeed";
 

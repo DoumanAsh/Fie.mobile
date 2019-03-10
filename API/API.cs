@@ -52,12 +52,12 @@ namespace API {
 
             using (var stream = assembly.GetManifestResourceStream(CONSUMER_KEY_R_NAME))
             using (var reader = new StreamReader(stream)) {
-                key = reader.ReadToEnd();
+                key = reader.ReadToEnd().Trim();
             }
 
             using (var stream = assembly.GetManifestResourceStream(CONSUMER_SECRET_R_NAME))
             using (var reader = new StreamReader(stream)) {
-                secret = reader.ReadToEnd();
+                secret = reader.ReadToEnd().Trim();
             }
         }
     }

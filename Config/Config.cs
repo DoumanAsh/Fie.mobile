@@ -42,7 +42,7 @@ namespace Config {
         public bool enabled;
 
         public override string ToString() {
-            return $"{{ username: {{ username: {username}, passowrd: {passowrd}, enable: {enabled} }}";
+            return $"{{ username: {username}, passowrd: {passowrd}, enable: {enabled} }}";
         }
 
     }
@@ -54,9 +54,19 @@ namespace Config {
         public bool enabled;
 
         public override string ToString() {
-            return $"{{ username: {{ username: {username}, passowrd: {passowrd}, enable: {enabled} }}";
+            return $"{{ username: {username}, passowrd: {passowrd}, enable: {enabled} }}";
         }
+    }
 
+    [Serializable]
+    public struct Mastodon {
+        public string host;
+        public string access_token;
+        public bool enabled;
+
+        public override string ToString() {
+            return $"{{ host: {host}, access_token: {access_token}, enable: {enabled} }}";
+        }
     }
 
     [Serializable]
@@ -64,12 +74,14 @@ namespace Config {
         public Twitter twitter;
         public Gab gab;
         public Minds minds;
+        public Mastodon mastodon;
 
-        static public ApiConfig with(Twitter? twitter, Gab? gab, Minds? minds) {
+        static public ApiConfig with(Twitter? twitter, Gab? gab, Minds? minds, Mastodon? mastodon) {
             return new ApiConfig {
                 twitter = twitter.GetValueOrDefault(),
                 gab = gab.GetValueOrDefault(),
                 minds = minds.GetValueOrDefault(),
+                mastodon = mastodon.GetValueOrDefault(),
             };
         }
 
@@ -88,18 +100,11 @@ namespace Config {
             using (var buffer = new System.IO.MemoryStream()) {
                 formatter.Serialize(buffer, this);
                 return Convert.ToBase64String(buffer.ToArray());
-
             }
         }
 
-        //Returns whether there at least
-        //single API enabled
-        public bool is_any_enabled() {
-            return twitter.enabled || gab.enabled;
-        }
-
         public override string ToString() {
-            return $"{{Gab: {gab}, Minds: {minds}, Twitter: {twitter} }}";
+            return $"{{Gab: {gab}, Minds: {minds}, Twitter: {twitter}, Mastodon: {mastodon} }}";
         }
     }
 }

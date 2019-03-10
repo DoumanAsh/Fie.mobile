@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.Fie" android:installLocation="auto" android:versionCode="3" android:versionName="1.2">
-	<uses-sdk android:minSdkVersion="19" android:targetSdkVersion="21" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.Fie" android:installLocation="auto" android:versionCode="4" android:versionName="1.3">
+	<uses-sdk android:minSdkVersion="19" android:targetSdkVersion="27" />
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.INTERNET" />
-	<application android:label="Fie"></application>
+	<application android:label="Fie" android:icon="@mipmap/icon"></application>
 </manifest>

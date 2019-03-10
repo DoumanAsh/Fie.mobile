@@ -138,6 +138,13 @@ namespace Fie.Data.HomePage {
             }
             get => this.config.minds.enabled;
         }
+        public bool is_on_mastodon {
+            set {
+                this.config.mastodon.enabled = value;
+                on_property_change();
+            }
+            get => this.config.mastodon.enabled;
+        }
         
 
         private void after_post() {
@@ -250,6 +257,29 @@ namespace Fie.Data.HomePage {
 
             return false;
         }
+        private async Task<bool> post_mastodon(string text, API.Options opts) {
+            try {
+                if (API.Mastodon.configure(this.config.mastodon.host, this.config.mastodon.access_token)) {
+                    if (await API.Mastodon.post(text, opts)) {
+                        return true;
+                    }
+                }
+            } catch (HttpRequestException error) {
+                Debug.log("Fie: Http error: {0}", error);
+                message_network_error();
+                return false;
+            } catch (Exception error) {
+                Debug.log("Fie: Mastodon error: {0}", error);
+            }
+ 
+            MessagingCenter.Send(this, Misc.DisplayAlert.NAME, new Misc.DisplayAlert {
+                title = "Failed to post",
+                message = "Error posting on Mastodon",
+                accept = "Ok",
+            });
+
+            return false;
+        }
 
         private async Task<bool> post_minds(string text, API.Options opts) {
             try {
@@ -281,7 +311,7 @@ namespace Fie.Data.HomePage {
             post = new Command(
                 execute: async () => {
                     if (is_ongoing) return;
-                    else if (!is_on_twitter && !is_on_gab && !is_on_minds) {
+                    else if (!is_on_twitter && !is_on_gab && !is_on_minds && !is_on_mastodon) {
                         Debug.log("Fie: nothing to do, ignore post");
                         return;
                     };
@@ -320,6 +350,11 @@ namespace Fie.Data.HomePage {
                     if (this.is_on_gab) {
                         Debug.log("Fie: gab post");
                         var result = await this.post_gab(post_text, opts);
+                        finished = finished && result;
+                    }
+                    if (this.is_on_mastodon) {
+                        Debug.log("Fie: mastodon post");
+                        var result = await this.post_mastodon(post_text, opts);
                         finished = finished && result;
                     }
                     if (this.is_on_minds) {
